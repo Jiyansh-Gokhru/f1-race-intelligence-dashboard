@@ -1,0 +1,175 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<workbook original-version='18.1' source-build='2026.3.0 (20263.23.1017.0948)' source-platform='win' version='18.1' xmlns:user='http://www.tableausoftware.com/xml/user'>
+  <document-format-change-manifest>
+    <AccessibleZoneTabOrder />
+    <AnimationOnByDefault />
+    <AutoCreateAndUpdateDSDPhoneLayouts />
+    <MarkAnimation />
+    <ObjectModelEncapsulateLegacy />
+    <ObjectModelTableType />
+    <SchemaViewerObjectModel />
+    <SetMembershipControl />
+    <SheetIdentifierTracking />
+    <WindowsPersistSimpleIdentifiers />
+  </document-format-change-manifest>
+  <preferences>
+    <preference name='ui.encoding.shelf.height' value='24' />
+    <preference name='ui.shelf.height' value='26' />
+  </preferences>
+  <datasources>
+    <datasource caption='F1 Race Intelligence Clean Tableau (6,464 Records)' inline='true' name='federated.f1_race_intelligence' version='18.1'>
+      <connection class='federated'>
+        <named-connections>
+          <named-connection caption='f1_race_intelligence_clean_tableau' name='textscan.f1_data'>
+            <connection class='textscan' directory='../data' filename='f1_race_intelligence_clean_tableau.csv' password='' server='' />
+          </named-connection>
+        </named-connections>
+        <relation connection='textscan.f1_data' name='f1_race_intelligence_clean_tableau.csv' table='[f1_race_intelligence_clean_tableau#csv]' type='table'>
+          <columns character-set='UTF-8' header='yes' locale='en_US' separator=','>
+            <column datatype='integer' name='race_id' ordinal='0' />
+            <column datatype='integer' name='season' ordinal='1' />
+            <column datatype='integer' name='round' ordinal='2' />
+            <column datatype='string' name='grand_prix' ordinal='3' />
+            <column datatype='string' name='circuit_name' ordinal='4' />
+            <column datatype='string' name='country' ordinal='5' />
+            <column datatype='string' name='circuit_type' ordinal='6' />
+            <column datatype='string' name='driver_name' ordinal='7' />
+            <column datatype='string' name='driver_code' ordinal='8' />
+            <column datatype='string' name='driver_nationality' ordinal='9' />
+            <column datatype='string' name='constructor_name' ordinal='10' />
+            <column datatype='integer' name='grid_position' ordinal='11' />
+            <column datatype='integer' name='finish_position' ordinal='12' />
+            <column datatype='string' name='status' ordinal='13' />
+            <column datatype='integer' name='is_dnf' ordinal='14' />
+            <column datatype='string' name='failure_type' ordinal='15' />
+            <column datatype='string' name='failure_category' ordinal='16' />
+            <column datatype='integer' name='points' ordinal='17' />
+            <column datatype='integer' name='podium' ordinal='18' />
+            <column datatype='integer' name='win' ordinal='19' />
+            <column datatype='string' name='tyre_compound' ordinal='20' />
+            <column datatype='integer' name='pit_stops' ordinal='21' />
+            <column datatype='real' name='reliability_score' ordinal='22' />
+          </columns>
+        </relation>
+      </connection>
+      <column caption='Driver Reliability Score (%)' datatype='real' name='[Calculation_Reliability]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='(1 - (SUM([is_dnf]) / COUNT([race_id]))) * 100' />
+      </column>
+      <column caption='Points Per Race (PPR)' datatype='real' name='[Calculation_PPR]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='ROUND(SUM([points]) / COUNT([race_id]), 2)' />
+      </column>
+      <column caption='Podium Conversion Rate (%)' datatype='real' name='[Calculation_PodiumRate]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='(SUM([podium]) / COUNT([race_id])) * 100' />
+      </column>
+      <column caption='Country' datatype='string' name='[country]' role='dimension' semantic-role='[Country].[ISO3166_2]' type='nominal' />
+      <column caption='Season' datatype='integer' name='[season]' role='dimension' type='ordinal' />
+    </datasource>
+  </datasources>
+  <worksheets>
+    <worksheet name='1. Driver Performance Leaderboard'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='F1 Race Intelligence Clean Tableau (6,464 Records)' name='federated.f1_race_intelligence' />
+          </datasources>
+          <aggregation value='true' />
+        </view>
+        <style />
+        <panes>
+          <pane selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Bar' />
+          </pane>
+        </panes>
+        <rows>[federated.f1_race_intelligence].[none:driver_name:nk]</rows>
+        <cols>[federated.f1_race_intelligence].[sum:points:qk]</cols>
+      </table>
+    </worksheet>
+    <worksheet name='2. Constructor Points Trajectory'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='F1 Race Intelligence Clean Tableau (6,464 Records)' name='federated.f1_race_intelligence' />
+          </datasources>
+          <aggregation value='true' />
+        </view>
+        <style />
+        <panes>
+          <pane selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Line' />
+          </pane>
+        </panes>
+        <rows>[federated.f1_race_intelligence].[sum:points:qk]</rows>
+        <cols>[federated.f1_race_intelligence].[none:season:ok]</cols>
+      </table>
+    </worksheet>
+    <worksheet name='3. Tyre Compound Strategy Impact'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='F1 Race Intelligence Clean Tableau (6,464 Records)' name='federated.f1_race_intelligence' />
+          </datasources>
+          <aggregation value='true' />
+        </view>
+        <style />
+        <panes>
+          <pane selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Bar' />
+          </pane>
+        </panes>
+        <rows>[federated.f1_race_intelligence].[avg:finish_position:qk]</rows>
+        <cols>([federated.f1_race_intelligence].[none:circuit_type:nk] / [federated.f1_race_intelligence].[none:tyre_compound:nk])</cols>
+      </table>
+    </worksheet>
+    <worksheet name='4. Driver Reliability &amp; DNF Analysis'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='F1 Race Intelligence Clean Tableau (6,464 Records)' name='federated.f1_race_intelligence' />
+          </datasources>
+          <aggregation value='true' />
+        </view>
+        <style />
+        <panes>
+          <pane selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Bar' />
+          </pane>
+        </panes>
+        <rows>[federated.f1_race_intelligence].[cnt:race_id:qk]</rows>
+        <cols>[federated.f1_race_intelligence].[none:constructor_name:nk]</cols>
+      </table>
+    </worksheet>
+  </worksheets>
+  <windows source-height='30'>
+    <window class='worksheet' maximized='true' name='1. Driver Performance Leaderboard'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='2147483647'>
+            <card type='columns' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='rows' />
+          </strip>
+        </edge>
+      </cards>
+    </window>
+  </windows>
+</workbook>
